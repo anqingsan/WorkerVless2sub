@@ -1,11 +1,13 @@
 # 使用在线网站检测ip和域名
 import requests
 import re
+import time
 
 def get_ip_location(ip_or_domain):
     """
     使用ip-api.com API查询IP地址或域名的位置信息
     """
+    # url = f"https://ip-api.io/api/json/{ip_or_domain}"
     url = f"http://ip-api.com/json/{ip_or_domain}"
 
     try:
@@ -57,7 +59,6 @@ def extract_ips_and_domains_from_file(file_path, port_default):
 
     return ip_addresses_or_domains, ports
 
-
 def main():
     """
     主程序入口
@@ -70,7 +71,11 @@ def main():
 
     # 使用 'w' 模式打开文件，每次运行都会覆盖原文件
     with open(output_file_path, "w", encoding='utf-8') as file:
-        for ip_address_or_domain in ip_addresses_or_domains:
+        for i, ip_address_or_domain in enumerate(ip_addresses_or_domains):
+            if i != 0 and i % 45 == 0:
+                print("达到45个IP检测数量，等待60秒后继续检测...")
+                time.sleep(60)  # 暂停60秒
+
             location = get_ip_location(ip_address_or_domain)
             port = ports[ip_addresses_or_domains.index(ip_address_or_domain)]
 
